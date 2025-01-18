@@ -3,6 +3,7 @@ using Scalar.AspNetCore;
 using Webhook.API.Abstract;
 using Webhook.API.Concrete;
 using Webhook.API.Models;
+using Webhook.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,8 @@ builder.Services.AddDbContext<Context>(opt =>
 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IWebhookSubsriptionRepository, WebhookSubsriptionRepository>();
+builder.Services.AddHttpClient<WebhookDispatcher>();
+
 
 var app = builder.Build();
 

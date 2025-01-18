@@ -1,18 +1,28 @@
-﻿using Webhook.API.Abstract;
+﻿using Microsoft.EntityFrameworkCore;
+using Webhook.API.Abstract;
 using Webhook.API.Models;
 
 namespace Webhook.API.Concrete
 {
     public class WebhookSubsriptionRepository : IWebhookSubsriptionRepository
     {
-        public Task AddWebhook(WebhookSubscrition subscrition)
+        private readonly Context _context;
+
+        public WebhookSubsriptionRepository(Context context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public IReadOnlyList<WebhookSubscrition> GetSubscriptions(string eventType)
+        public async Task AddWebhook(CreateWebhookRequest subscrition)
         {
-            throw new NotImplementedException();
+            await _context.Webhooks.AddAsync(new WebhookSubscrition(Guid.NewGuid(), subscrition.EventType, subscrition.WebhookUrl, DateTime.UtcNow));
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IReadOnlyList<WebhookSubscrition>> GetSubscriptions(string eventType)
+        {
+            return await _context.Webhooks.Where(x => x.EventType == eventType).AsNoTracking().ToListAsync();
         }
     }
 }
